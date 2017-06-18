@@ -1,0 +1,196 @@
+import os
+
+students = [
+    {
+        "full_name": "Alexey Vladimirovich Umnov",
+        "sex": "male",
+        "exp": False,
+        "hw_marks": [2, 5, 4, 3, 4, 4, 5],
+        "exam": 4
+    },
+    {
+        "full_name": "Dmitriy Sergeevich Petrov",
+        "sex": "male",
+        "exp": False,
+        "hw_marks": [3, 4, 4, 2, 3, 3, 4],
+        "exam": 3
+    },
+    {
+        "full_name": "Dmitriy Andreevich Sokolov",
+        "sex": "male",
+        "exp": True,
+        "hw_marks": [4, 5, 4, 4, 4, 4, 5],
+        "exam": 5
+    },
+    {
+        "full_name": "Olga Nikolaevna Reznik",
+        "sex": "female",
+        "exp": True,
+        "hw_marks": [4, 3, 4, 5, 3, 4, 5],
+        "exam": 4
+    },
+    {
+        "full_name": "Evgeniy Alexandrovich Velichko",
+        "sex": "male",
+        "exp": False,
+        "hw_marks": [5, 5, 3, 4, 4, 4, 3],
+        "exam": 4
+    },
+    {
+        "full_name": "Ivan Fedorovich Kruzenshtern",
+        "sex": "male",
+        "exp": False,
+        "hw_marks": [4, 5, 4, 3, 4, 4, 5],
+        "exam": 5
+    },
+    {
+        "full_name": "Ilya Ilich Oblomov",
+        "sex": "male",
+        "exp": False,
+        "hw_marks": [2, 3, 3, 2, 3, 3, 4],
+        "exam": 3
+    },
+    {
+        "full_name": "Alla Borisovna Pugacheva",
+        "sex": "female",
+        "exp": False,
+        "hw_marks": [2, 3, 3, 2, 4, 3, 4],
+        "exam": 3
+    },
+    {
+        "full_name": "Valentina Ivanovna Matvienko",
+        "sex": "female",
+        "exp": True,
+        "hw_marks": [4, 3, 3, 3, 4, 5, 3],
+        "exam": 4
+    },
+]
+
+
+def main_menu():
+
+    print("\nNetology students marks base main menu\n")
+
+    print("Paste 'avg' to estimate average marks.")
+    print("Paste 'alloc' to estimate marks allocation.")
+    print("Paste 'best' to find students with the best marks.")
+
+    print("Paste 'q' to quit.\n")
+
+
+def estimate_average_mark(students):
+
+    overall_hw_marks_count = 0
+    overall_hw_marks_value = 0
+    overall_exam_marks_value = 0
+    for student in students:
+        overall_hw_marks_count += len(student['hw_marks'])
+        overall_hw_marks_value += sum(student['hw_marks'])
+        overall_exam_marks_value += student['exam']
+
+    average_hw_marks = overall_hw_marks_value / overall_hw_marks_count
+    average_exam_marks = overall_exam_marks_value / len(students)
+    return {
+        "avg_hw_marks": average_hw_marks,
+        "avg_exam_marks": average_exam_marks
+    }
+
+
+def estimate_marks_allocation(students):
+
+    male_student_marks = estimate_average_mark([student for student in students if student['sex'] == 'male'])
+    female_student_marks = estimate_average_mark([student for student in students if student['sex'] == 'female'])
+    exp_student_marks = estimate_average_mark([student for student in students if student['exp']])
+    no_exp_student_marks = estimate_average_mark([student for student in students if not student['exp']])
+    return {
+        'avg_hw_male': male_student_marks['avg_hw_marks'],
+        'avg_exam_male': male_student_marks['avg_exam_marks'],
+        'avg_hw_female': female_student_marks['avg_hw_marks'],
+        'avg_exam_female': female_student_marks['avg_exam_marks'],
+        'avg_hw_exp': exp_student_marks['avg_hw_marks'],
+        'avg_exam_exp': exp_student_marks['avg_exam_marks'],
+        'avg_hw_noexp': no_exp_student_marks['avg_hw_marks'],
+        'avg_exam_noexp': no_exp_student_marks['avg_exam_marks']
+    }
+
+
+def best_students(students):
+
+    best_students = []
+    mark = 0
+    for student in students:
+        average_hw_mark = sum(student['hw_marks']) / len(student['hw_marks'])
+        student_integrate_mark = 0.6 * average_hw_mark + 0.4 * student['exam']
+        if student_integrate_mark > mark:
+            mark = student_integrate_mark
+            best_students = []
+
+        if student_integrate_mark == mark:
+            best_students.append("{full_name}".format(**student))
+
+    return {'full_name': best_students, 'hw_marks': mark}
+
+
+def show_average_mark(average_hw_marks):
+
+    print("Средняя оценка за домашние задания по группе: {avg_hw_marks:.2f}".format(**average_hw_marks))
+    print("Средняя оценка за экзамен: {avg_exam_marks:.2f}".format(**average_hw_marks))
+
+def show_mark_allocation(mark_allocation):
+
+    print("Средняя оценка за домашние задания у мужчин: {avg_hw_male:.3f}".format(**mark_allocation))
+    print("Средняя оценка за экзамен у мужчин: {avg_exam_male:.3f}".format(**mark_allocation))
+    print("Средняя оценка за домашние задания у женщин: {avg_hw_female:.3f}".format(**mark_allocation))
+    print("Средняя оценка за экзамен у женщин: {avg_exam_female:.3f}".format(**mark_allocation))
+    print("Средняя оценка за домашние задания у студентов с опытом: {avg_hw_exp:.3f}".format(**mark_allocation))
+    print("Средняя оценка за экзамен у студентов с опытом: {avg_exam_exp:.3f}".format(**mark_allocation))
+    print("Средняя оценка за домашние задания у студентов без опыта: {avg_hw_noexp:.3f}".format(**mark_allocation))
+    print("Средняя оценка за экзамен у студентов без опыта: {avg_exam_noexp:.3f}".format(**mark_allocation))
+
+def show_best_students(best_students):
+
+    full_name = best_students['full_name']
+    hw_marks = best_students['hw_marks']
+    if len(full_name) == 1:
+        print('Лучший студент: {0} c интегральной оценкой {1:.3f}'.format(full_name[0], hw_marks))
+    elif len(full_name) > 1:
+        all_names = ", ".join(full_name)
+        print('Лучшие студенты: {0} c интегральной оценкой {1:.3f}'.format(all_names, hw_marks))
+
+
+def selection_menu():
+    return {
+        'avg': {
+            'operation': estimate_average_mark,
+            'output': show_average_mark
+        },
+        'alloc': {
+            'operation': estimate_marks_allocation,
+            'output': show_mark_allocation
+        },
+        'best': {
+            'operation': best_students,
+            'output': show_best_students
+        },
+        'q': {
+            'operation': lambda *args: None,
+            'output': lambda *args: None
+        }
+    }
+
+
+def main():
+    your_input = None
+
+    while your_input != 'q':
+        main_menu()
+        your_input = input()
+        if not (your_input in selection_menu()):
+            print("\nError: {0}".format(your_input))
+            continue
+        user_input = selection_menu()[your_input]
+        operation_data = user_input['operation'](students)
+        user_input['output'](operation_data)
+
+
+main()
